@@ -9,7 +9,7 @@
 
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #eaf5f9; 
+            background-color: #f8f6f0; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -32,204 +32,43 @@
             padding-bottom: 20px;
             border-bottom: 2px dashed #f0f0f0;
         }
-        .section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
+        .section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        h2 {
-            margin-top: 0;
-            font-size: 1.05rem;
-            color: #6c757d;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        h2 { margin-top: 0; font-size: 1.05rem; color: #6c757d; font-weight: 700; display: flex; align-items: center; gap: 8px; }
 
-        /* 0. 홈 버튼 & 날짜 이동 네비게이션 */
-        .nav-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .home-btn {
-            text-decoration: none;
-            color: #4a7bb0;
-            font-weight: 700;
-            font-size: 0.9rem;
-            background-color: #eef7fc;
-            padding: 6px 12px;
-            border-radius: 10px;
-        }
-        .date-picker-container {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .date-btn {
-            background: none;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            cursor: pointer;
-            padding: 4px 8px;
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-        #date-input {
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 4px 8px;
-            font-family: inherit;
-            font-size: 0.85rem;
-            color: #4a4a4a;
-            outline: none;
-        }
+        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .home-btn { text-decoration: none; color: #4a7bb0; font-weight: 700; font-size: 0.9rem; background-color: #eef7fc; padding: 6px 12px; border-radius: 10px; }
+        .date-picker-container { display: flex; align-items: center; gap: 5px; }
+        .date-btn { background: none; border: 1px solid #e0e0e0; border-radius: 6px; cursor: pointer; padding: 4px 8px; font-size: 0.85rem; color: #6c757d; }
+        #date-input { border: 1px solid #e0e0e0; border-radius: 6px; padding: 4px 8px; font-family: inherit; font-size: 0.85rem; color: #4a4a4a; outline: none; }
 
-        /* 1. 카운트다운 섹션 */
-        #countdown-timer {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ff9fa8; 
-            text-align: center;
-            background-color: #fff0f2;
-            padding: 12px;
-            border-radius: 12px;
-        }
+        #countdown-timer { font-size: 1.3rem; font-weight: 700; color: #ff9fa8; text-align: center; background-color: #fff0f2; padding: 12px; border-radius: 12px; }
 
-        /* 2. 오늘의 한마디 섹션 */
         .quote-section { text-align: center; }
-        #quote-text {
-            background-color: #eef7fc;
-            color: #5b8cba;
-            padding: 12px 15px;
-            border-radius: 12px;
-            font-weight: 500;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.4;
-            font-size: 0.9rem;
-        }
-        #new-quote-btn {
-            background-color: #bceadd; 
-            color: #2b7a61;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
+        #quote-text { background-color: #eef7fc; color: #5b8cba; padding: 12px 15px; border-radius: 12px; font-weight: 500; min-height: 40px; display: flex; align-items: center; justify-content: center; line-height: 1.4; font-size: 0.9rem; }
+        #new-quote-btn { background-color: #bceadd; color: #2b7a61; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.85rem; margin-top: 10px; }
 
-        /* 3. 투두 리스트 섹션 */
-        .todo-input-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        #todo-input {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #f0f0f0;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            outline: none;
-            font-family: inherit;
-        }
-        #add-todo-btn {
-            background-color: #ffe0b2;
-            color: #d37c00;
-            border: none;
-            padding: 0 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-        }
-        #todo-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 160px;
-            overflow-y: auto;
-        }
-        .todo-item {
-            display: flex;
-            align-items: center;
-            background-color: #faf9f7;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 6px;
-        }
-        .todo-item input[type="checkbox"] {
-            margin-right: 10px;
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-            accent-color: #ff9fa8;
-        }
+        .todo-input-container { display: flex; gap: 8px; margin-bottom: 12px; }
+        #todo-input { flex: 1; padding: 10px; border: 2px solid #f0f0f0; border-radius: 10px; font-size: 0.9rem; outline: none; font-family: inherit; }
+        #add-todo-btn { background-color: #ffe0b2; color: #d37c00; border: none; padding: 0 15px; border-radius: 10px; cursor: pointer; font-weight: 700; }
+        #todo-list { list-style: none; padding: 0; margin: 0; max-height: 160px; overflow-y: auto; }
+        .todo-item { display: flex; align-items: center; background-color: #faf9f7; padding: 10px; border-radius: 10px; margin-bottom: 6px; }
+        .todo-item input[type="checkbox"] { margin-right: 10px; width: 16px; height: 16px; cursor: pointer; accent-color: #ff9fa8; }
         .todo-text { flex: 1; font-size: 0.9rem; }
         .todo-item.completed .todo-text { text-decoration: line-through; color: #adb5bd; }
         .delete-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1.1rem; }
         .delete-btn:hover { color: #ff8787; }
 
-        /* 4. 일일 달성률 바 */
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         #progress-percent { font-weight: 700; color: #5b8cba; font-size: 0.95rem; }
-        .progress-bar-container {
-            width: 100%;
-            height: 12px;
-            background-color: #f0f3f8;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background-color: #5b8cba;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
+        .progress-bar-container { width: 100%; height: 12px; background-color: #f0f3f8; border-radius: 10px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background-color: #5b8cba; border-radius: 10px; transition: width 0.3s ease; }
 
-        /* 5. 신규: 주간 달성률 (월~일) 차트 */
-        .weekly-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            margin-top: 10px;
-            text-align: center;
-        }
-        .weekly-day {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
+        .weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; text-align: center; }
+        .weekly-day { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
         .weekly-day-name { font-size: 0.75rem; color: #888; font-weight: 700; }
-        .weekly-bar-bg {
-            width: 100%;
-            height: 50px;
-            background-color: #f0f3f8;
-            border-radius: 6px;
-            display: flex;
-            align-items: flex-end;
-            overflow: hidden;
-        }
-        .weekly-bar-fill {
-            width: 100%;
-            height: 0%;
-            background-color: #a4c4b5;
-            transition: height 0.3s ease;
-        }
+        .weekly-bar-bg { width: 100%; height: 50px; background-color: #f0f3f8; border-radius: 6px; display: flex; align-items: flex-end; overflow: hidden; }
+        .weekly-bar-fill { width: 100%; height: 0%; background-color: #a4c4b5; transition: height 0.3s ease; }
         .weekly-percent { font-size: 0.7rem; color: #666; font-weight: 500; }
         .weekly-day.active .weekly-day-name { color: #ff9fa8; }
     </style>
@@ -237,7 +76,6 @@
 <body>
 
     <div class="planner-container">
-        <!-- 0. 메인 이동 및 날짜 선택 네비게이션 -->
         <div class="nav-header">
             <a href="index.html" class="home-btn">🏠 홈으로</a>
             <div class="date-picker-container">
@@ -247,20 +85,17 @@
             </div>
         </div>
 
-        <!-- 1. 카운트다운 -->
         <div class="section">
             <h2>⏳ 올해의 남은 시간</h2>
             <div id="countdown-timer">계산 중...</div>
         </div>
 
-        <!-- 2. 오늘의 한마디 -->
         <div class="section quote-section">
             <h2>💡 오늘의 한마디</h2>
             <div id="quote-text"></div>
             <button id="new-quote-btn">✨ 자극 받기</button>
         </div>
 
-        <!-- 3. To-Do 리스트 -->
         <div class="section">
             <h2>📝 To-Do List</h2>
             <div class="todo-input-container">
@@ -270,7 +105,6 @@
             <ul id="todo-list"></ul>
         </div>
 
-        <!-- 4. 선택한 날짜 달성률 -->
         <div class="section">
             <div class="progress-header">
                 <h2>📊 선택한 날짜 달성률</h2>
@@ -281,17 +115,35 @@
             </div>
         </div>
 
-        <!-- 5. 주간 달성률 (월~일) -->
         <div class="section">
             <h2>📅 이번 주 달성 현황 (월~일)</h2>
             <div class="weekly-grid" id="weekly-grid"></div>
         </div>
     </div>
 
-    <script>
-        const MEMBER_ID = 'fafa'; // 👈 다른 파일은 'mom', 'sun', 'yellowgreen'으로 이 부분만 수정하세요!
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // 오늘 날짜를 YYYY-MM-DD 형식으로 구하기
+        // ⚠️ 본인의 Firebase 설정값으로 교체하세요!
+        const firebaseConfig = {
+             apiKey: "AIzaSyB4dGxKvvvHoj8YAkCKCIwZVIcQm82dwI8",
+             authDomain: "family-planner-7ec60.firebaseapp.com",
+            databaseURL: "https://family-planner-7ec60-default-rtdb.firebaseio.com",
+            projectId: "family-planner-7ec60",
+            storageBucket: "family-planner-7ec60.firebasestorage.app",
+            messagingSenderId: "40996684471",
+            appId: "1:40996684471:web:8885ca0dc8cd336dee4332",
+            measurementId: "G-D7KEXNJZHX"
+
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const MEMBER_ID = 'fafa'; // 👈 다른 파일은 'mom', 'sun', 'yellowgreen'으로 이 부분만 수정!
+
         function formatDate(date) {
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -303,9 +155,7 @@
         const dateInput = document.getElementById('date-input');
         dateInput.value = selectedDate;
 
-        /* ================================
-           1. 카운트다운 & 명언
-           ================================ */
+        /* 카운트다운 & 명언 */
         function updateCountdown() {
             const now = new Date();
             const targetDate = new Date(now.getFullYear() + 1, 0, 1); 
@@ -321,13 +171,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        const quotes = [
-            "시작이 반이다. 오늘 하루도 파이팅!",
-            "노력은 결코 배신하지 않는다.",
-            "작은 성취가 모여 위대한 성공을 만든다.",
-            "어제보다 나은 오늘을 만들자.",
-            "오늘 흘린 땀은 내일의 확실한 자신감이 된다."
-        ];
+        const quotes = ["시작이 반이다. 파이팅!", "노력은 결코 배신하지 않는다.", "작은 성취가 모여 위대한 성공이 된다."];
         function changeQuote() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
             document.getElementById('quote-text').innerText = `"${quotes[randomIndex]}"`;
@@ -335,44 +179,33 @@
         document.getElementById('new-quote-btn').addEventListener('click', changeQuote);
         changeQuote();
 
-        /* ================================
-           2. 날짜별 To-Do 로드 및 저장 로직
-           ================================ */
+        /* Firebase 연동 투두 로직 */
         const todoInput = document.getElementById('todo-input');
         const addTodoBtn = document.getElementById('add-todo-btn');
         const todoList = document.getElementById('todo-list');
         const progressBar = document.getElementById('progress-bar');
         const progressPercent = document.getElementById('progress-percent');
 
-        // 로컬스토리지 키 구하기
-        function getStorageKey(dateStr) {
-            return `planner_tasks_${MEMBER_ID}_${dateStr}`;
+        async function getTasksOfDate(dateStr) {
+            const snapshot = await get(child(ref(db), `tasks/${MEMBER_ID}/${dateStr}`));
+            return snapshot.exists() ? snapshot.val() : [];
         }
 
-        // 특정 날짜의 투두 항목 가져오기
-        function getTasksOfDate(dateStr) {
-            const data = localStorage.getItem(getStorageKey(dateStr));
-            return data ? JSON.parse(data) : [];
-        }
-
-        // 특정 날짜의 투두 항목 저장하기
-        function saveTasksOfDate(dateStr, tasks) {
-            localStorage.setItem(getStorageKey(dateStr), JSON.stringify(tasks));
+        async function saveTasksOfDate(dateStr, tasks) {
+            await set(ref(db, `tasks/${MEMBER_ID}/${dateStr}`), tasks);
             
-            // 오늘 날짜인 경우 index.html 연동용 최신 퍼센트 저장
             const todayStr = formatDate(new Date());
             if (dateStr === todayStr) {
                 const total = tasks.length;
                 const completed = tasks.filter(t => t.completed).length;
                 const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-                localStorage.setItem(`planner_progress_${MEMBER_ID}`, percent);
+                await set(ref(db, `progress/${MEMBER_ID}`), percent);
             }
         }
 
-        // 현재 선택된 날짜 화면 다시 그리기
-        function renderPlanner() {
+        async function renderPlanner() {
             todoList.innerHTML = '';
-            const tasks = getTasksOfDate(selectedDate);
+            const tasks = await getTasksOfDate(selectedDate);
             
             tasks.forEach((task, index) => {
                 const li = document.createElement('li');
@@ -381,9 +214,9 @@
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.checked = task.completed;
-                checkbox.addEventListener('change', () => {
+                checkbox.addEventListener('change', async () => {
                     tasks[index].completed = checkbox.checked;
-                    saveTasksOfDate(selectedDate, tasks);
+                    await saveTasksOfDate(selectedDate, tasks);
                     renderPlanner();
                 });
 
@@ -394,9 +227,9 @@
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.innerHTML = '×';
-                deleteBtn.addEventListener('click', () => {
+                deleteBtn.addEventListener('click', async () => {
                     tasks.splice(index, 1);
-                    saveTasksOfDate(selectedDate, tasks);
+                    await saveTasksOfDate(selectedDate, tasks);
                     renderPlanner();
                 });
 
@@ -406,7 +239,6 @@
                 todoList.appendChild(li);
             });
 
-            // 일단위 progress 바 계산
             const total = tasks.length;
             const completed = tasks.filter(t => t.completed).length;
             const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
@@ -414,17 +246,15 @@
             progressBar.style.width = `${percent}%`;
             progressPercent.innerText = `${percent}% (${completed}/${total})`;
 
-            // 주간 차트 갱신
             renderWeeklyChart();
         }
 
-        // 투두 추가
-        function addTodo() {
+        async function addTodo() {
             const text = todoInput.value.trim();
             if (!text) return alert('할 일을 입력하세요!');
-            const tasks = getTasksOfDate(selectedDate);
+            const tasks = await getTasksOfDate(selectedDate);
             tasks.push({ text, completed: false });
-            saveTasksOfDate(selectedDate, tasks);
+            await saveTasksOfDate(selectedDate, tasks);
             todoInput.value = '';
             renderPlanner();
         }
@@ -432,41 +262,22 @@
         addTodoBtn.addEventListener('click', addTodo);
         todoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTodo(); });
 
-        /* ================================
-           3. 날짜 이동 이벤트
-           ================================ */
-        dateInput.addEventListener('change', (e) => {
-            selectedDate = e.target.value;
-            renderPlanner();
-        });
-
+        dateInput.addEventListener('change', (e) => { selectedDate = e.target.value; renderPlanner(); });
         document.getElementById('prev-day-btn').addEventListener('click', () => {
-            const d = new Date(selectedDate);
-            d.setDate(d.getDate() - 1);
-            selectedDate = formatDate(d);
-            dateInput.value = selectedDate;
-            renderPlanner();
+            const d = new Date(selectedDate); d.setDate(d.getDate() - 1);
+            selectedDate = formatDate(d); dateInput.value = selectedDate; renderPlanner();
         });
-
         document.getElementById('next-day-btn').addEventListener('click', () => {
-            const d = new Date(selectedDate);
-            d.setDate(d.getDate() + 1);
-            selectedDate = formatDate(d);
-            dateInput.value = selectedDate;
-            renderPlanner();
+            const d = new Date(selectedDate); d.setDate(d.getDate() + 1);
+            selectedDate = formatDate(d); dateInput.value = selectedDate; renderPlanner();
         });
 
-        /* ================================
-           4. 주간 차트 (월~일) 그리기
-           ================================ */
-        function renderWeeklyChart() {
+        async function renderWeeklyChart() {
             const weeklyGrid = document.getElementById('weekly-grid');
             weeklyGrid.innerHTML = '';
 
             const current = new Date(selectedDate);
-            const dayOfWeek = current.getDay(); // 0(일) ~ 6(토)
-            
-            // 월요일 날짜 구하기
+            const dayOfWeek = current.getDay();
             const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
             const monday = new Date(current);
             monday.setDate(current.getDate() + distanceToMon);
@@ -478,35 +289,32 @@
                 dayDate.setDate(monday.getDate() + i);
                 const dayStr = formatDate(dayDate);
 
-                const tasks = getTasksOfDate(dayStr);
+                const tasks = await getTasksOfDate(dayStr);
                 const total = tasks.length;
                 const completed = tasks.filter(t => t.completed).length;
                 const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
-                const isSelected = dayStr === selectedDate;
-
                 const dayEl = document.createElement('div');
-                dayEl.className = `weekly-day ${isSelected ? 'active' : ''}`;
+                dayEl.className = `weekly-day ${dayStr === selectedDate ? 'active' : ''}`;
                 dayEl.innerHTML = `
                     <div class="weekly-day-name">${dayLabels[i]}</div>
-                    <div class="weekly-bar-bg" title="${dayStr}: ${percent}%">
-                        <div class="weekly-bar-fill" style="height: ${percent}%;"></div>
-                    </div>
+                    <div class="weekly-bar-bg"><div class="weekly-bar-fill" style="height: ${percent}%;"></div></div>
                     <div class="weekly-percent">${percent}%</div>
                 `;
-                
-                // 막대를 누르면 해당 날짜로 이동하는 기능
                 dayEl.addEventListener('click', () => {
                     selectedDate = dayStr;
                     dateInput.value = selectedDate;
                     renderPlanner();
                 });
-
                 weeklyGrid.appendChild(dayEl);
             }
         }
 
-        // 초기 실행
+        // 서버의 변경 사항을 실시간 감지하여 자동 갱신
+        onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
+            renderPlanner();
+        });
+
         renderPlanner();
     </script>
 </body>
