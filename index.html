@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리 가족 목표 달성 플래너</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        /* 전체 배경 및 폰트 설정 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f6f0; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #4a4a4a;
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 420px;
+            border-radius: 24px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+            padding: 35px 25px;
+            text-align: center;
+        }
+
+        /* 헤더 스타일 */
+        .header h1 {
+            font-size: 1.4rem;
+            color: #333333;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            color: #888888;
+            margin: 0 0 25px 0;
+            font-weight: 400;
+        }
+
+        /* 가족 카드 그리드 레이아웃 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* 개별 카드 링크 스타일 */
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 15px;
+            border-radius: 18px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card .icon {
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        .card .name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        /* 달성률 표시 영역 */
+        .progress-box {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 700;
+            opacity: 0.85;
+        }
+
+        .card-progress-bg {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .card-progress-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.4s ease-in-out;
+        }
+
+        /* 멤버별 테마 색상 지정 */
+        /* 아부지 - 파스텔 블루 */
+        .card-fafa { background-color: #eef7fc; color: #4a7bb0; }
+        .card-fafa .card-progress-bar { background-color: #5b8cba; }
+        
+        /* 어무이 - 파스텔 핑크 */
+        .card-mom { background-color: #fff0f2; color: #e06d79; }
+        .card-mom .card-progress-bar { background-color: #ff9fa8; }
+        
+        /* 봄돌이 - 파스텔 옐로우 */
+        .card-sun { background-color: #fff8e7; color: #d99b00; }
+        .card-sun .card-progress-bar { background-color: #ffd18c; }
+        
+        /* 깜찍연두 - 파스텔 그린 */
+        .card-yellowgreen { background-color: #ebf6ee; color: #438a5e; }
+        .card-yellowgreen .card-progress-bar { background-color: #a4c4b5; }
+
+        /* 푸터 메세지 */
+        .footer-msg {
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: #aaa;
+            border-top: 1px dashed #f0f0f0;
+            padding-top: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="header">
+            <h1>🏡 우리 가족 플래너</h1>
+            <p>오늘 하루도 힘차게!! ✨</p>
+        </div>
+
+        <div class="grid-container">
+            <!-- 아부지 -->
+            <a href="fafa.html" class="card card-fafa">
+                <span class="icon">👓</span>
+                <span class="name">아부지</span>
+                <div class="progress-box">
+                    <div class="progress-info">
+                        <span>달성률</span>
+                        <span id="percent-fafa">0%</span>
+                    </div>
+                    <div class="card-progress-bg">
+                        <div id="bar-fafa" class="card-progress-bar"></div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 어무이 -->
+            <a href="mom.html" class="card card-mom">
+                <span class="icon">🌸</span>
+                <span class="name">어무이</span>
+                <div class="progress-box">
+                    <div class="progress-info">
+                        <span>달성률</span>
+                        <span id="percent-mom">0%</span>
+                    </div>
+                    <div class="card-progress-bg">
+                        <div id="bar-mom" class="card-progress-bar"></div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 봄돌이 -->
+            <a href="sun.html" class="card card-sun">
+                <span class="icon">☀️</span>
+                <span class="name">봄돌이</span>
+                <div class="progress-box">
+                    <div class="progress-info">
+                        <span>달성률</span>
+                        <span id="percent-sun">0%</span>
+                    </div>
+                    <div class="card-progress-bg">
+                        <div id="bar-sun" class="card-progress-bar"></div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 깜찍연두 -->
+            <a href="yellowgreen.html" class="card card-yellowgreen">
+                <span class="icon">🌱</span>
+                <span class="name">깜찍연두</span>
+                <div class="progress-box">
+                    <div class="progress-info">
+                        <span>달성률</span>
+                        <span id="percent-yellowgreen">0%</span>
+                    </div>
+                    <div class="card-progress-bg">
+                        <div id="bar-yellowgreen" class="card-progress-bar"></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="footer-msg">
+            각자의 위치에서 오늘도 파이팅! ❤️
+        </div>
+    </div>
+
+    <script>
+        // 저장소에서 각 멤버의 달성률을 불러와서 화면에 반영하는 함수
+        function loadFamilyProgress() {
+            const members = ['fafa', 'mom', 'sun', 'yellowgreen'];
+
+            members.forEach(member => {
+                // 저장된 퍼센트 값을 가져옴 (없으면 0)
+                const savedPercent = localStorage.getItem(`planner_progress_${member}`) || 0;
+                
+                // 텍스트 및 바 길이 업데이트
+                document.getElementById(`percent-${member}`).innerText = `${savedPercent}%`;
+                document.getElementById(`bar-${member}`).style.width = `${savedPercent}%`;
+            });
+        }
+
+        // 페이지가 열릴 때 즉시 불러오기
+        window.addEventListener('DOMContentLoaded', loadFamilyProgress);
+    </script>
+</body>
+</html>

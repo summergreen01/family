@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>목표 달성 스터디 플래너</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        /* 전체 배경 및 폰트 설정 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #d8f6fd; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #4a4a4a;
+        }
+
+        /* 플래너 메인 컨테이너 */
+        .planner-container {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 420px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+
+        /* 각 섹션 구분 */
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px dashed #f0f0f0;
+        }
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        h2, h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: #6c757d;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 1. 카운트다운 섹션 */
+        .countdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .countdown-header h2 {
+            margin-bottom: 0;
+        }
+        #current-date {
+            font-size: 0.85rem;
+            color: #8898a6;
+            font-weight: 500;
+            background-color: #f0f4f8;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+        #countdown-timer {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ff9fa8; 
+            text-align: center;
+            background-color: #fff0f2;
+            padding: 15px;
+            border-radius: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* 2. 오늘의 한마디 섹션 */
+        .quote-section {
+            text-align: center;
+        }
+        #quote-text {
+            background-color: #eef7fc;
+            color: #5b8cba;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: keep-all;
+            line-height: 1.5;
+        }
+        #new-quote-btn {
+            background-color: #bceadd; 
+            color: #2b7a61;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        #new-quote-btn:hover {
+            background-color: #a3decb;
+            transform: translateY(-2px);
+        }
+
+        /* 3. 투두 리스트 섹션 */
+        .todo-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        #todo-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        #todo-input:focus {
+            border-color: #ffe0b2;
+        }
+        #add-todo-btn {
+            background-color: #ffe0b2;
+            color: #d37c00;
+            border: none;
+            padding: 0 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background-color 0.2s;
+        }
+        #add-todo-btn:hover {
+            background-color: #ffd18c;
+        }
+        #todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            background-color: #faf9f7;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        .todo-item:hover {
+            background-color: #f2f0ec;
+        }
+        .todo-item input[type="checkbox"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #ff9fa8;
+        }
+        .todo-text {
+            flex: 1;
+            font-size: 0.95rem;
+            transition: color 0.2s, text-decoration 0.2s;
+        }
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #adb5bd;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #e9ecef;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 5px;
+            transition: color 0.2s;
+        }
+        .todo-item:hover .delete-btn {
+            color: #ff8787;
+        }
+
+        /* 4. 달성률 그래프 섹션 */
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .progress-header h2 {
+            margin-bottom: 0;
+        }
+        #progress-percent {
+            font-weight: 700;
+            color: #70a1ff;
+            font-size: 1rem;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 14px;
+            background-color: #f0f3f8;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #a4c4b5;
+            border-radius: 10px;
+            transition: width 0.4s ease-in-out;
+        }
+        
+        /* 스크롤바 디자인 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #e9ecef;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="planner-container">
+        <!-- 1. 카운트다운 타이머 & 오늘 날짜 -->
+        <div class="section countdown-section">
+            <div class="countdown-header">
+                <h2>⏳ 올해의 남은 시간</h2>
+                <span id="current-date">--년 --월 --일 (-)</span>
+            </div>
+            <div id="countdown-timer">계산 중...</div>
+        </div>
+
+        <!-- 2. 오늘의 한마디 -->
+        <div class="section quote-section">
+            <h2>💡 오늘의 한마디</h2>
+            <div id="quote-text"></div>
+            <button id="new-quote-btn">✨ 자극 받기</button>
+        </div>
+
+        <!-- 3. To-Do 리스트 -->
+        <div class="section todo-section">
+            <h2>📝 To-Do List</h2>
+            <div class="todo-input-container">
+                <input type="text" id="todo-input" placeholder="오늘 달성할 목표를 적어보세요">
+                <button id="add-todo-btn">추가</button>
+            </div>
+            <ul id="todo-list"></ul>
+        </div>
+
+        <!-- 4. 오늘 달성률 -->
+        <div class="section progress-section">
+            <div class="progress-header">
+                <h2>📊 오늘 달성률</h2>
+                <span id="progress-percent">0% (0/0)</span>
+            </div>
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ================================
+           0. 오늘 날짜 및 요일 출력
+           ================================ */
+        function updateDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+            const day = dayNames[now.getDay()];
+
+            document.getElementById('current-date').innerText = `${year}년 ${month}월 ${date}일 (${day})`;
+        }
+        updateDate();
+
+        /* ================================
+           1. 실시간 카운트다운 로직
+           ================================ */
+        function updateCountdown() {
+            const now = new Date();
+            const targetDate = new Date(now.getFullYear() + 1, 0, 1); 
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                document.getElementById('countdown-timer').innerText = "새해가 밝았습니다! 🎉";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            const format = (num) => String(num).padStart(2, '0');
+
+            document.getElementById('countdown-timer').innerText = 
+                `${days}일 ${format(hours)}:${format(minutes)}:${format(seconds)}`;
+        }
+        
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        /* ================================
+           2. 오늘의 한마디 로직
+           ================================ */
+        const quotes = [
+            "시작이 반이다. 오늘 하루도 파이팅!",
+            "지금 잠을 자면 꿈을 꾸지만, 지금 공부하면 꿈을 이룬다.",
+            "노력은 결코 배신하지 않는다.",
+            "미래는 현재 우리가 무엇을 하는가에 달려 있다.",
+            "가장 어두운 밤이 지나면 가장 밝은 아침이 온다.",
+            "작은 성취가 모여 위대한 성공을 만든다.",
+            "포기하지 않는 한 실패는 없다.",
+            "어제보다 나은 오늘을 만들자.",
+            "오늘 흘린 땀은 내일의 확실한 자신감이 된다.",
+            "작은 실행 하나가 원대한 계획보다 가치 있다.",
+            "내일의 나에게 부끄럽지 않은 오늘을 보내자.",
+            "할 수 있다고 믿는 순간, 이미 반은 이룬 것이다.",
+            "꾸준함은 특별함을 이기는 가장 강력한 무기다.",
+            "당신이 포기하지 않는 한, 꿈은 계속 진행 중이다.",
+            "지금 힘든 것은 당신이 높은 산을 오르고 있기 때문이다.",
+            "오늘 하루도 목표에 한 걸음 더 가까워졌다.",
+            "남들과 비교하지 말고, 어제의 나와 경쟁하라.",
+            "완벽한 때를 기다리지 말고, 지금 순간을 완벽하게 만들자."
+        ];
+        
+        const quoteText = document.getElementById('quote-text');
+        const newQuoteBtn = document.getElementById('new-quote-btn');
+
+        function changeQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            quoteText.innerText = `"${quotes[randomIndex]}"`;
+        }
+
+        newQuoteBtn.addEventListener('click', changeQuote);
+        changeQuote();
+
+        /* ================================
+           3. To-Do 리스트 및 달성률 계산 로직
+           ================================ */
+        const todoInput = document.getElementById('todo-input');
+        const addTodoBtn = document.getElementById('add-todo-btn');
+        const todoList = document.getElementById('todo-list');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+
+        function updateProgress() {
+            const items = todoList.querySelectorAll('.todo-item');
+            const total = items.length;
+            
+            if (total === 0) {
+                progressBar.style.width = '0%';
+                progressPercent.innerText = '0% (0/0)';
+                return;
+            }
+
+            const completed = todoList.querySelectorAll('.todo-item.completed').length;
+            const percent = Math.round((completed / total) * 100);
+
+            progressBar.style.width = `${percent}%`;
+            progressPercent.innerText = `${percent}% (${completed}/${total})`;
+
+            localStorage.setItem('planner_progress_fafa', percent);
+        }
+
+        function addTodo() {
+            const text = todoInput.value.trim();
+            if (text === '') {
+                alert('할 일을 입력해 주세요!');
+                return;
+            }
+
+            const li = document.createElement('li');
+            li.className = 'todo-item';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    li.classList.add('completed');
+                } else {
+                    li.classList.remove('completed');
+                }
+                updateProgress();
+            });
+
+            const span = document.createElement('span');
+            span.className = 'todo-text';
+            span.innerText = text;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.title = '삭제';
+            deleteBtn.addEventListener('click', function() {
+                li.style.opacity = '0';
+                setTimeout(() => {
+                    todoList.removeChild(li);
+                    updateProgress();
+                }, 200);
+            });
+
+            li.appendChild(checkbox);
+            li.appendChild(span);
+            li.appendChild(deleteBtn);
+            
+            todoList.appendChild(li);
+            todoInput.value = '';
+            todoInput.focus();
+
+            updateProgress();
+        }
+
+        addTodoBtn.addEventListener('click', addTodo);
+        todoInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+    </script>
+</body>
+</html>
