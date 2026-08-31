@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아부지 목표 달성 스터디 플래너</title>
+    <title>봄돌봄돌 목표 달성 스터디 플래너</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
@@ -171,7 +171,22 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        const quotes = ["시작이 반이다. 파이팅!", "노력은 결코 배신하지 않는다.", "작은 성취가 모여 위대한 성공이 된다."];
+        const quotes = ["시작이 반이다. 파이팅!", "노력은 결코 배신하지 않는다.", "작은 성취가 모여 위대한 성공이 된다.","지금 잠을 자면 꿈을 꾸지만, 지금 공부하면 꿈을 이룬다.",
+    "노력은 결코 배신하지 않는다.",
+    "미래는 현재 우리가 무엇을 하는가에 달려 있다.",
+    "가장 어두운 밤이 지나면 가장 밝은 아침이 온다.",
+    "작은 성취가 모여 위대한 성공을 만든다.",
+    "포기하지 않는 한 실패는 없다.",
+    "어제보다 나은 오늘을 만들자.","오늘 흘린 땀은 내일의 확실한 자신감이 된다.",
+    "작은 실행 하나가 원대한 계획보다 가치 있다.",
+    "내일의 나에게 부끄럽지 않은 오늘을 보내자.",
+    "할 수 있다고 믿는 순간, 이미 반은 이룬 것이다.",
+    "꾸준함은 특별함을 이기는 가장 강력한 무기다.",
+    "당신이 포기하지 않는 한, 꿈은 계속 진행 중이다.",
+    "지금 힘든 것은 당신이 높은 산을 오르고 있기 때문이다.",
+    "오늘 하루도 목표에 한 걸음 더 가까워졌다.",
+    "남들과 비교하지 말고, 어제의 나와 경쟁하라.",
+    "완벽한 때를 기다리지 말고, 지금 순간을 완벽하게 만들자."];
         function changeQuote() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
             document.getElementById('quote-text').innerText = `"${quotes[randomIndex]}"`;
@@ -271,51 +286,73 @@
             const d = new Date(selectedDate); d.setDate(d.getDate() + 1);
             selectedDate = formatDate(d); dateInput.value = selectedDate; renderPlanner();
         });
+                    /* ================================
+   수정된 주간 차트 (중복 출력 방지 적용)
+   ================================ */
+async function renderWeeklyChart() {
+    const weeklyGrid = document.getElementById('weekly-grid');
 
-        async function renderWeeklyChart() {
-            const weeklyGrid = document.getElementById('weekly-grid');
-            weeklyGrid.innerHTML = '';
+    const current = new Date(selectedDate);
+    const dayOfWeek = current.getDay();
+    const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(current);
+    monday.setDate(current.getDate() + distanceToMon);
 
-            const current = new Date(selectedDate);
-            const dayOfWeek = current.getDay();
-            const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-            const monday = new Date(current);
-            monday.setDate(current.getDate() + distanceToMon);
+    const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
 
-            const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+    // 1. 7일 치 데이터를 서버에서 동시에 모두 받아옵니다.
+    const weekPromises = Array.from({ length: 7 }, (_, i) => {
+        const dayDate = new Date(monday);
+        dayDate.setDate(monday.getDate() + i);
+        const dayStr = formatDate(dayDate);
+        return getTasksOfDate(dayStr).then(tasks => ({
+            dayStr,
+            dayLabel: dayLabels[i],
+            tasks
+        }));
+    });
 
-            for (let i = 0; i < 7; i++) {
-                const dayDate = new Date(monday);
-                dayDate.setDate(monday.getDate() + i);
-                const dayStr = formatDate(dayDate);
+    const weekData = await Promise.all(weekPromises);
 
-                const tasks = await getTasksOfDate(dayStr);
-                const total = tasks.length;
-                const completed = tasks.filter(t => t.completed).length;
-                const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    // 2. 데이터를 완전히 다 받아온 후에 화면을 싹 비우고 한 번에 깔끔하게 그립니다.
+    weeklyGrid.innerHTML = '';
 
-                const dayEl = document.createElement('div');
-                dayEl.className = `weekly-day ${dayStr === selectedDate ? 'active' : ''}`;
-                dayEl.innerHTML = `
-                    <div class="weekly-day-name">${dayLabels[i]}</div>
-                    <div class="weekly-bar-bg"><div class="weekly-bar-fill" style="height: ${percent}%;"></div></div>
-                    <div class="weekly-percent">${percent}%</div>
-                `;
-                dayEl.addEventListener('click', () => {
-                    selectedDate = dayStr;
-                    dateInput.value = selectedDate;
-                    renderPlanner();
-                });
-                weeklyGrid.appendChild(dayEl);
-            }
-        }
+    weekData.forEach(item => {
+        const total = item.tasks.length;
+        const completed = item.tasks.filter(t => t.completed).length;
+        const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+        const dayEl = document.createElement('div');
+        dayEl.className = `weekly-day ${item.dayStr === selectedDate ? 'active' : ''}`;
+        dayEl.innerHTML = `
+            <div class="weekly-day-name">${item.dayLabel}</div>
+            <div class="weekly-bar-bg"><div class="weekly-bar-fill" style="height: ${percent}%;"></div></div>
+            <div class="weekly-percent">${percent}%</div>
+        `;
+        dayEl.addEventListener('click', () => {
+            selectedDate = item.dayStr;
+            dateInput.value = selectedDate;
+            renderPlanner();
+        });
+        weeklyGrid.appendChild(dayEl);
+    });
+}
+
+// Firebase 데이터 변경 감지 (페이지 진입 시 최초 1회 자동 실행됨)
+onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
+    renderPlanner();
+});
+
+// 맨 아래에 있던 중복 renderPlanner(); 호출을 제거했습니다.
+
+
 
         // 서버의 변경 사항을 실시간 감지하여 자동 갱신
         onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
             renderPlanner();
         });
 
-        renderPlanner();
+       
     </script>
 </body>
 </html>

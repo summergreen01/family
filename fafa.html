@@ -273,49 +273,67 @@
         });
 
         async function renderWeeklyChart() {
-            const weeklyGrid = document.getElementById('weekly-grid');
-            weeklyGrid.innerHTML = '';
+              const weeklyGrid = document.getElementById('weekly-grid');
 
-            const current = new Date(selectedDate);
-            const dayOfWeek = current.getDay();
-            const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-            const monday = new Date(current);
-            monday.setDate(current.getDate() + distanceToMon);
+    const current = new Date(selectedDate);
+    const dayOfWeek = current.getDay();
+    const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(current);
+    monday.setDate(current.getDate() + distanceToMon);
 
-            const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+    const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
 
-            for (let i = 0; i < 7; i++) {
-                const dayDate = new Date(monday);
-                dayDate.setDate(monday.getDate() + i);
-                const dayStr = formatDate(dayDate);
+    // 1. 7일 치 데이터를 서버에서 동시에 모두 받아옵니다.
+    const weekPromises = Array.from({ length: 7 }, (_, i) => {
+        const dayDate = new Date(monday);
+        dayDate.setDate(monday.getDate() + i);
+        const dayStr = formatDate(dayDate);
+        return getTasksOfDate(dayStr).then(tasks => ({
+            dayStr,
+            dayLabel: dayLabels[i],
+            tasks
+        }));
+    });
 
-                const tasks = await getTasksOfDate(dayStr);
-                const total = tasks.length;
-                const completed = tasks.filter(t => t.completed).length;
-                const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    const weekData = await Promise.all(weekPromises);
 
-                const dayEl = document.createElement('div');
-                dayEl.className = `weekly-day ${dayStr === selectedDate ? 'active' : ''}`;
-                dayEl.innerHTML = `
-                    <div class="weekly-day-name">${dayLabels[i]}</div>
-                    <div class="weekly-bar-bg"><div class="weekly-bar-fill" style="height: ${percent}%;"></div></div>
-                    <div class="weekly-percent">${percent}%</div>
-                `;
-                dayEl.addEventListener('click', () => {
-                    selectedDate = dayStr;
-                    dateInput.value = selectedDate;
-                    renderPlanner();
-                });
-                weeklyGrid.appendChild(dayEl);
-            }
-        }
+    // 2. 데이터를 완전히 다 받아온 후에 화면을 싹 비우고 한 번에 깔끔하게 그립니다.
+    weeklyGrid.innerHTML = '';
+
+    weekData.forEach(item => {
+        const total = item.tasks.length;
+        const completed = item.tasks.filter(t => t.completed).length;
+        const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+        const dayEl = document.createElement('div');
+        dayEl.className = `weekly-day ${item.dayStr === selectedDate ? 'active' : ''}`;
+        dayEl.innerHTML = `
+            <div class="weekly-day-name">${item.dayLabel}</div>
+            <div class="weekly-bar-bg"><div class="weekly-bar-fill" style="height: ${percent}%;"></div></div>
+            <div class="weekly-percent">${percent}%</div>
+        `;
+        dayEl.addEventListener('click', () => {
+            selectedDate = item.dayStr;
+            dateInput.value = selectedDate;
+            renderPlanner();
+        });
+        weeklyGrid.appendChild(dayEl);
+         }); 
+     }
+
+
+        // Firebase 데이터 변경 감지 (페이지 진입 시 최초 1회 자동 실행됨)
+        onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
+         renderPlanner();
+        });
+
 
         // 서버의 변경 사항을 실시간 감지하여 자동 갱신
         onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
             renderPlanner();
         });
 
-        renderPlanner();
+        
     </script>
 </body>
 </html>
