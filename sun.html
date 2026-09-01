@@ -42,16 +42,16 @@
         .date-btn { background: none; border: 1px solid #e0e0e0; border-radius: 6px; cursor: pointer; padding: 4px 8px; font-size: 0.85rem; color: #6c757d; }
         #date-input { border: 1px solid #e0e0e0; border-radius: 6px; padding: 4px 8px; font-family: inherit; font-size: 0.85rem; color: #4a4a4a; outline: none; }
 
-        #countdown-timer { font-size: 1.3rem; font-weight: 700; color: #ff9fa8; text-align: center; background-color: #fff0f2; padding: 12px; border-radius: 12px; }
+        #countdown-timer { font-size: 1.3rem; font-weight: 700; color: #ff9fa8; text-align: center; background-color: #fff0f2; padding: 10px; border-radius: 12px; }
 
         .quote-section { text-align: center; }
-        #quote-text { background-color: #eef7fc; color: #5b8cba; padding: 12px 15px; border-radius: 12px; font-weight: 500; min-height: 40px; display: flex; align-items: center; justify-content: center; line-height: 1.4; font-size: 0.9rem; }
+        #quote-text { background-color: #eef7fc; color: #5b8cba; padding: 10px 15px; border-radius: 12px; font-weight: 500; min-height: 40px; display: flex; align-items: center; justify-content: center; line-height: 1.4; font-size: 0.9rem; }
         #new-quote-btn { background-color: #bceadd; color: #2b7a61; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.85rem; margin-top: 10px; }
 
         .todo-input-container { display: flex; gap: 8px; margin-bottom: 12px; }
         #todo-input { flex: 1; padding: 10px; border: 2px solid #f0f0f0; border-radius: 10px; font-size: 0.9rem; outline: none; font-family: inherit; }
         #add-todo-btn { background-color: #ffe0b2; color: #d37c00; border: none; padding: 0 15px; border-radius: 10px; cursor: pointer; font-weight: 700; }
-        #todo-list { list-style: none; padding: 0; margin: 0; max-height: 160px; overflow-y: auto; }
+        #todo-list { list-style: none; padding: 0; margin: 0; max-height: 230px; overflow-y: auto; }
         .todo-item { display: flex; align-items: center; background-color: #faf9f7; padding: 10px; border-radius: 10px; margin-bottom: 6px; }
         .todo-item input[type="checkbox"] { margin-right: 10px; width: 16px; height: 16px; cursor: pointer; accent-color: #ff9fa8; }
         .todo-text { flex: 1; font-size: 0.9rem; }
@@ -71,6 +71,45 @@
         .weekly-bar-fill { width: 100%; height: 0%; background-color: #a4c4b5; transition: height 0.3s ease; }
         .weekly-percent { font-size: 0.7rem; color: #666; font-weight: 500; }
         .weekly-day.active .weekly-day-name { color: #ff9fa8; }
+
+                /* 오늘의 한 줄 마무리 스타일 */
+        .reflection-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        #reflection-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            outline: none;
+            font-family: inherit;
+            resize: none; /* 크기 조절 금지 */
+            line-height: 1.4;
+        }
+        #reflection-input:focus {
+            border-color: #bceadd;
+        }
+        #save-reflection-btn {
+            background-color: #bceadd;
+            color: #2b7a61;
+            border: none;
+            padding: 0 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .reflection-msg {
+            font-size: 0.75rem;
+            color: #5b8cba;
+            margin-top: 6px;
+            text-align: right;
+            min-height: 15px;
+        }
     </style>
 </head>
 <body>
@@ -107,13 +146,24 @@
 
         <div class="section">
             <div class="progress-header">
-                <h2>📊 선택한 날짜 달성률</h2>
+                <h2>📊 오늘의 목표 달성률</h2>
                 <span id="progress-percent">0% (0/0)</span>
             </div>
             <div class="progress-bar-container">
                 <div id="progress-bar" class="progress-bar"></div>
             </div>
         </div>
+
+        <!-- 4.5 오늘의 한 줄 마무리 (신규 추가) -->
+        <div class="section">
+            <h2>💭 오늘의 한 줄 마무리</h2>
+            <div class="reflection-container">
+                <textarea id="reflection-input" placeholder="오늘 하루는 어땠나요? (1~2줄 요약)" rows="2" maxlength="100"></textarea>
+                <button id="save-reflection-btn">저장</button>
+            </div>
+            <div id="reflection-msg" class="reflection-msg"></div>
+        </div>
+
 
         <div class="section">
             <h2>📅 이번 주 달성 현황 (월~일)</h2>
@@ -286,6 +336,39 @@
             const d = new Date(selectedDate); d.setDate(d.getDate() + 1);
             selectedDate = formatDate(d); dateInput.value = selectedDate; renderPlanner();
         });
+
+                // DOM 요소 가져오기
+        const reflectionInput = document.getElementById('reflection-input');
+        const saveReflectionBtn = document.getElementById('save-reflection-btn');
+        const reflectionMsg = document.getElementById('reflection-msg');
+
+        // 선택된 날짜의 한 줄 마무리 가져오기
+        async function loadReflection() {
+            reflectionInput.value = '';
+            reflectionMsg.innerText = '';
+            
+            // Firebase에서 불러오기
+            const snapshot = await get(child(ref(db), `reflections/${MEMBER_ID}/${selectedDate}`));
+            if (snapshot.exists()) {
+                reflectionInput.value = snapshot.val();
+            }
+        }
+
+        // 한 줄 마무리 저장하기
+        saveReflectionBtn.addEventListener('click', async () => {
+            const text = reflectionInput.value.trim();
+            await set(ref(db, `reflections/${MEMBER_ID}/${selectedDate}`), text);
+            
+            reflectionMsg.innerText = '저장되었습니다! ✨';
+            setTimeout(() => { reflectionMsg.innerText = ''; }, 2000);
+        });
+
+        // 💡 기존 날짜 이동 함수(renderPlanner 등)가 실행될 때 loadReflection(); 도 함께 호출해 주세요!
+
+
+
+
+
                     /* ================================
    수정된 주간 차트 (중복 출력 방지 적용)
    ================================ */
@@ -342,16 +425,6 @@ async function renderWeeklyChart() {
 onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
     renderPlanner();
 });
-
-// 맨 아래에 있던 중복 renderPlanner(); 호출을 제거했습니다.
-
-
-
-        // 서버의 변경 사항을 실시간 감지하여 자동 갱신
-        onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
-            renderPlanner();
-        });
-
        
     </script>
 </body>
