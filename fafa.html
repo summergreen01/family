@@ -122,7 +122,7 @@
     </div>
 
     <!-- Firebase Script -->
-    <!-- Firebase Script -->
+        <!-- Firebase Script -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -148,6 +148,13 @@
         const m = String(date.getMonth() + 1).padStart(2, '0');
         const d = String(date.getDate()).padStart(2, '0');
         return `${y}-${m}-${d}`;
+    }
+
+    // 🔥 데이터 타입(객체/배열) 상관없이 안전하게 배열 형태로 바꿔주는 안심 함수
+    function parseTasks(data) {
+        if (!data) return [];
+        if (Array.isArray(data)) return data;
+        return Object.values(data);
     }
 
     let selectedDate = formatDate(new Date());
@@ -187,24 +194,25 @@
 
     async function getTasksOfDate(dateStr) {
         const snapshot = await get(child(ref(db), `tasks/${MEMBER_ID}/${dateStr}`));
-        return snapshot.exists() ? snapshot.val() : [];
+        return snapshot.exists() ? parseTasks(snapshot.val()) : [];
     }
 
     async function saveTasksOfDate(dateStr, tasks) {
-        await set(ref(db, `tasks/${MEMBER_ID}/${dateStr}`), tasks);
+        const safeTasks = parseTasks(tasks);
+        await set(ref(db, `tasks/${MEMBER_ID}/${dateStr}`), safeTasks);
         
         const todayStr = formatDate(new Date());
         if (dateStr === todayStr) {
-            const total = tasks.length;
-            const completed = tasks.filter(t => t.completed).length;
+            const total = safeTasks.length;
+            const completed = safeTasks.filter(t => t.completed).length;
             const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
             await set(ref(db, `progress/${MEMBER_ID}`), percent);
         }
     }
 
-    // 화면 그리기 (Firebase 자동 감지 시 호출됨)
-    function renderPlannerWithTasks(tasks) {
-        // 서버에서 받아온 데이터를 바탕으로 화면을 '단 한 번만' 비우고 그립니다.
+    // 화면 그리기
+    function renderPlannerWithTasks(rawData) {
+        const tasks = parseTasks(rawData);
         todoList.innerHTML = '';
         
         tasks.forEach((task, index) => {
@@ -216,7 +224,7 @@
             checkbox.checked = task.completed;
             checkbox.addEventListener('change', async () => {
                 tasks[index].completed = checkbox.checked;
-                await saveTasksOfDate(selectedDate, tasks); // Firebase가 저장되면 자동 감지로 재출력됨
+                await saveTasksOfDate(selectedDate, tasks);
             });
 
             const span = document.createElement('span');
@@ -228,7 +236,7 @@
             deleteBtn.innerHTML = '×';
             deleteBtn.addEventListener('click', async () => {
                 tasks.splice(index, 1);
-                await saveTasksOfDate(selectedDate, tasks); // Firebase가 저장되면 자동 감지로 재출력됨
+                await saveTasksOfDate(selectedDate, tasks);
             });
 
             li.appendChild(checkbox);
@@ -254,24 +262,26 @@
         const text = todoInput.value.trim();
         if (!text) return alert('할 일을 입력하세요!');
         
-        const tasks = await getTasksOfDate(selectedDate);
-        tasks.push({ text, completed: false });
-        todoInput.value = ''; // 입력창 비우기
-        
-        await saveTasksOfDate(selectedDate, tasks);
-        // ⚠️ 여기서 renderPlanner()를 수동 호출하지 않습니다. (Firebase 감지기가 알아서 실행함)
+        try {
+            const tasks = await getTasksOfDate(selectedDate);
+            tasks.push({ text, completed: false });
+            todoInput.value = ''; // 입력창 비우기
+            
+            await saveTasksOfDate(selectedDate, tasks);
+        } catch (err) {
+            console.error("추가 중 오류 발생:", err);
+        }
     }
 
     addTodoBtn.addEventListener('click', addTodo);
     todoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTodo(); });
 
-    /* 3. 날짜 변경 및 감지기 재설정 */
+    /* 3. 날짜 변경 및 실시간 감지기 */
     let unsubscribe = null;
 
     function listenToSelectedDate() {
-        if (unsubscribe) unsubscribe(); // 기존 날짜 감지 해제
+        if (unsubscribe) unsubscribe(); // 기존 감지 해제
 
-        // 선택한 날짜 데이터 실시간 감지 시작
         const tasksRef = ref(db, `tasks/${MEMBER_ID}/${selectedDate}`);
         unsubscribe = onValue(tasksRef, (snapshot) => {
             const tasks = snapshot.exists() ? snapshot.val() : [];
@@ -312,7 +322,7 @@
             const dayDate = new Date(monday);
             dayDate.setDate(monday.getDate() + i);
             const dayStr = formatDate(dayDate);
-            return getTasksOfDate(dayStr).then(tasks => ({ dayStr, dayLabel: dayLabels[i], tasks }));
+            return getTasksOfDate(dayStr).then(tasks => ({ dayStr, dayLabel: dayLabels[i], tasks: parseTasks(tasks) }));
         });
 
         const weekData = await Promise.all(weekPromises);
@@ -343,6 +353,9 @@
     // 최초 실행
     listenToSelectedDate();
 </script>
+
+
+
 
 </body>
 </html>
