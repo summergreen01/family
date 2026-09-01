@@ -122,228 +122,217 @@
     </div>
 
     <!-- Firebase Script -->
-    <!-- Firebase Script -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // ⚠️ 본인의 Firebase 설정값으로 교체하세요!
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-        projectId: "YOUR_PROJECT",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "XXXXXX",
-        appId: "XXXXXX"
-    };
+        // ⚠️ 본인의 Firebase 설정값으로 교체하세요!
+        const firebaseConfig = {
+             apiKey: "AIzaSyB4dGxKvvvHoj8YAkCKCIwZVIcQm82dwI8",
+             authDomain: "family-planner-7ec60.firebaseapp.com",
+            databaseURL: "https://family-planner-7ec60-default-rtdb.firebaseio.com",
+            projectId: "family-planner-7ec60",
+            storageBucket: "family-planner-7ec60.firebasestorage.app",
+            messagingSenderId: "40996684471",
+            appId: "1:40996684471:web:8885ca0dc8cd336dee4332",
+            measurementId: "G-D7KEXNJZHX"
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+        };
 
-    const MEMBER_ID = 'mom'; // 👈 'fafa', 'mom', 'sun', 'yellowgreen' 중 파일에 맞게 수정
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-    function formatDate(date) {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-    }
+        const MEMBER_ID = 'mom'; // 👈 다른 파일은 'mom', 'sun', 'yellowgreen'으로 이 부분만 수정!
 
-    let selectedDate = formatDate(new Date());
-    const dateInput = document.getElementById('date-input');
-    dateInput.value = selectedDate;
+        function formatDate(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
 
-    /* 1. 카운트다운 & 명언 */
-    function updateCountdown() {
-        const now = new Date();
-        const targetDate = new Date(now.getFullYear() + 1, 0, 1); 
-        const diff = targetDate - now;
-        if (diff <= 0) return;
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / 1000 / 60) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
-        const format = (num) => String(num).padStart(2, '0');
-        document.getElementById('countdown-timer').innerText = `${days}일 ${format(hours)}:${format(minutes)}:${format(seconds)}`;
-    }
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+        let selectedDate = formatDate(new Date());
+        const dateInput = document.getElementById('date-input');
+        dateInput.value = selectedDate;
 
-    const quotes = ["시작이 반이다. 파이팅!", "노력은 결코 배신하지 않는다.", "작은 성취가 모여 위대한 성공이 된다."];
-    function changeQuote() {
-        const randomIndex = Math.floor(Math.random() * quotes.length);
-        document.getElementById('quote-text').innerText = `"${quotes[randomIndex]}"`;
-    }
-    document.getElementById('new-quote-btn').addEventListener('click', changeQuote);
-    changeQuote();
+        /* 카운트다운 & 명언 */
+        function updateCountdown() {
+            const now = new Date();
+            const targetDate = new Date(now.getFullYear() + 1, 0, 1); 
+            const diff = targetDate - now;
+            if (diff <= 0) return;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            const format = (num) => String(num).padStart(2, '0');
+            document.getElementById('countdown-timer').innerText = `${days}일 ${format(hours)}:${format(minutes)}:${format(seconds)}`;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
 
-    /* 2. Firebase 연동 투두 데이터 조작 */
-    const todoInput = document.getElementById('todo-input');
-    const addTodoBtn = document.getElementById('add-todo-btn');
-    const todoList = document.getElementById('todo-list');
-    const progressBar = document.getElementById('progress-bar');
-    const progressPercent = document.getElementById('progress-percent');
+        const quotes = ["시작이 반이다. 파이팅!", "노력은 결코 배신하지 않는다.", "작은 성취가 모여 위대한 성공이 된다."];
+        function changeQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById('quote-text').innerText = `"${quotes[randomIndex]}"`;
+        }
+        document.getElementById('new-quote-btn').addEventListener('click', changeQuote);
+        changeQuote();
 
-    async function getTasksOfDate(dateStr) {
-        const snapshot = await get(child(ref(db), `tasks/${MEMBER_ID}/${dateStr}`));
-        return snapshot.exists() ? snapshot.val() : [];
-    }
+        /* Firebase 연동 투두 로직 */
+        const todoInput = document.getElementById('todo-input');
+        const addTodoBtn = document.getElementById('add-todo-btn');
+        const todoList = document.getElementById('todo-list');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
 
-    async function saveTasksOfDate(dateStr, tasks) {
-        await set(ref(db, `tasks/${MEMBER_ID}/${dateStr}`), tasks);
-        
-        const todayStr = formatDate(new Date());
-        if (dateStr === todayStr) {
+        async function getTasksOfDate(dateStr) {
+            const snapshot = await get(child(ref(db), `tasks/${MEMBER_ID}/${dateStr}`));
+            return snapshot.exists() ? snapshot.val() : [];
+        }
+
+        async function saveTasksOfDate(dateStr, tasks) {
+            await set(ref(db, `tasks/${MEMBER_ID}/${dateStr}`), tasks);
+            
+            const todayStr = formatDate(new Date());
+            if (dateStr === todayStr) {
+                const total = tasks.length;
+                const completed = tasks.filter(t => t.completed).length;
+                const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+                await set(ref(db, `progress/${MEMBER_ID}`), percent);
+            }
+        }
+
+        async function renderPlanner() {
+            todoList.innerHTML = '';
+            const tasks = await getTasksOfDate(selectedDate);
+            
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = `todo-item ${task.completed ? 'completed' : ''}`;
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = task.completed;
+                checkbox.addEventListener('change', async () => {
+                    tasks[index].completed = checkbox.checked;
+                    await saveTasksOfDate(selectedDate, tasks);
+                    renderPlanner();
+                });
+
+                const span = document.createElement('span');
+                span.className = 'todo-text';
+                span.innerText = task.text;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.innerHTML = '×';
+                deleteBtn.addEventListener('click', async () => {
+                    tasks.splice(index, 1);
+                    await saveTasksOfDate(selectedDate, tasks);
+                    renderPlanner();
+                });
+
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                li.appendChild(deleteBtn);
+                todoList.appendChild(li);
+            });
+
             const total = tasks.length;
             const completed = tasks.filter(t => t.completed).length;
             const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-            await set(ref(db, `progress/${MEMBER_ID}`), percent);
+
+            progressBar.style.width = `${percent}%`;
+            progressPercent.innerText = `${percent}% (${completed}/${total})`;
+
+            renderWeeklyChart();
         }
-    }
 
-    // 화면 그리기 (Firebase 자동 감지 시 호출됨)
-    function renderPlannerWithTasks(tasks) {
-        // 서버에서 받아온 데이터를 바탕으로 화면을 '단 한 번만' 비우고 그립니다.
-        todoList.innerHTML = '';
-        
-        tasks.forEach((task, index) => {
-            const li = document.createElement('li');
-            li.className = `todo-item ${task.completed ? 'completed' : ''}`;
+        async function addTodo() {
+            const text = todoInput.value.trim();
+            if (!text) return alert('할 일을 입력하세요!');
+            const tasks = await getTasksOfDate(selectedDate);
+            tasks.push({ text, completed: false });
+            await saveTasksOfDate(selectedDate, tasks);
+            todoInput.value = '';
+            renderPlanner();
+        }
 
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = task.completed;
-            checkbox.addEventListener('change', async () => {
-                tasks[index].completed = checkbox.checked;
-                await saveTasksOfDate(selectedDate, tasks); // Firebase가 저장되면 자동 감지로 재출력됨
-            });
+        addTodoBtn.addEventListener('click', addTodo);
+        todoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTodo(); });
 
-            const span = document.createElement('span');
-            span.className = 'todo-text';
-            span.innerText = task.text;
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.innerHTML = '×';
-            deleteBtn.addEventListener('click', async () => {
-                tasks.splice(index, 1);
-                await saveTasksOfDate(selectedDate, tasks); // Firebase가 저장되면 자동 감지로 재출력됨
-            });
-
-            li.appendChild(checkbox);
-            li.appendChild(span);
-            li.appendChild(deleteBtn);
-            todoList.appendChild(li);
+        dateInput.addEventListener('change', (e) => { selectedDate = e.target.value; renderPlanner(); });
+        document.getElementById('prev-day-btn').addEventListener('click', () => {
+            const d = new Date(selectedDate); d.setDate(d.getDate() - 1);
+            selectedDate = formatDate(d); dateInput.value = selectedDate; renderPlanner();
+        });
+        document.getElementById('next-day-btn').addEventListener('click', () => {
+            const d = new Date(selectedDate); d.setDate(d.getDate() + 1);
+            selectedDate = formatDate(d); dateInput.value = selectedDate; renderPlanner();
         });
 
-        // 일일 달성률 계산
-        const total = tasks.length;
-        const completed = tasks.filter(t => t.completed).length;
+        async function renderWeeklyChart() {
+            
+                const weeklyGrid = document.getElementById('weekly-grid');
+
+    const current = new Date(selectedDate);
+    const dayOfWeek = current.getDay();
+    const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(current);
+    monday.setDate(current.getDate() + distanceToMon);
+
+    const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+
+    // 1. 7일 치 데이터를 서버에서 동시에 모두 받아옵니다.
+    const weekPromises = Array.from({ length: 7 }, (_, i) => {
+        const dayDate = new Date(monday);
+        dayDate.setDate(monday.getDate() + i);
+        const dayStr = formatDate(dayDate);
+        return getTasksOfDate(dayStr).then(tasks => ({
+            dayStr,
+            dayLabel: dayLabels[i],
+            tasks
+        }));
+    });
+
+    const weekData = await Promise.all(weekPromises);
+
+    // 2. 데이터를 완전히 다 받아온 후에 화면을 싹 비우고 한 번에 깔끔하게 그립니다.
+    weeklyGrid.innerHTML = '';
+
+    weekData.forEach(item => {
+        const total = item.tasks.length;
+        const completed = item.tasks.filter(t => t.completed).length;
         const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
-        progressBar.style.width = `${percent}%`;
-        progressPercent.innerText = `${percent}% (${completed}/${total})`;
-
-        // 주간 차트 그리기
-        renderWeeklyChart();
-    }
-
-    // 목표 추가 버튼
-    async function addTodo() {
-        const text = todoInput.value.trim();
-        if (!text) return alert('할 일을 입력하세요!');
-        
-        const tasks = await getTasksOfDate(selectedDate);
-        tasks.push({ text, completed: false });
-        todoInput.value = ''; // 입력창 비우기
-        
-        await saveTasksOfDate(selectedDate, tasks);
-        // ⚠️ 여기서 renderPlanner()를 수동 호출하지 않습니다. (Firebase 감지기가 알아서 실행함)
-    }
-
-    addTodoBtn.addEventListener('click', addTodo);
-    todoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTodo(); });
-
-    /* 3. 날짜 변경 및 감지기 재설정 */
-    let unsubscribe = null;
-
-    function listenToSelectedDate() {
-        if (unsubscribe) unsubscribe(); // 기존 날짜 감지 해제
-
-        // 선택한 날짜 데이터 실시간 감지 시작
-        const tasksRef = ref(db, `tasks/${MEMBER_ID}/${selectedDate}`);
-        unsubscribe = onValue(tasksRef, (snapshot) => {
-            const tasks = snapshot.exists() ? snapshot.val() : [];
-            renderPlannerWithTasks(tasks);
+        const dayEl = document.createElement('div');
+        dayEl.className = `weekly-day ${item.dayStr === selectedDate ? 'active' : ''}`;
+        dayEl.innerHTML = `
+            <div class="weekly-day-name">${item.dayLabel}</div>
+            <div class="weekly-bar-bg"><div class="weekly-bar-fill" style="height: ${percent}%;"></div></div>
+            <div class="weekly-percent">${percent}%</div>
+        `;
+        dayEl.addEventListener('click', () => {
+            selectedDate = item.dayStr;
+            dateInput.value = selectedDate;
+            renderPlanner();
         });
-    }
-
-    dateInput.addEventListener('change', (e) => {
-        selectedDate = e.target.value;
-        listenToSelectedDate();
+        weeklyGrid.appendChild(dayEl);
     });
 
-    document.getElementById('prev-day-btn').addEventListener('click', () => {
-        const d = new Date(selectedDate); d.setDate(d.getDate() - 1);
-        selectedDate = formatDate(d); dateInput.value = selectedDate;
-        listenToSelectedDate();
-    });
+        }
 
-    document.getElementById('next-day-btn').addEventListener('click', () => {
-        const d = new Date(selectedDate); d.setDate(d.getDate() + 1);
-        selectedDate = formatDate(d); dateInput.value = selectedDate;
-        listenToSelectedDate();
-    });
-
-    /* 4. 주간 차트 (월~일) */
-    async function renderWeeklyChart() {
-        const weeklyGrid = document.getElementById('weekly-grid');
-
-        const current = new Date(selectedDate);
-        const dayOfWeek = current.getDay();
-        const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-        const monday = new Date(current);
-        monday.setDate(current.getDate() + distanceToMon);
-
-        const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
-
-        const weekPromises = Array.from({ length: 7 }, (_, i) => {
-            const dayDate = new Date(monday);
-            dayDate.setDate(monday.getDate() + i);
-            const dayStr = formatDate(dayDate);
-            return getTasksOfDate(dayStr).then(tasks => ({ dayStr, dayLabel: dayLabels[i], tasks }));
+        // 서버의 변경 사항을 실시간 감지하여 자동 갱신
+        onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
+            renderPlanner();
         });
 
-        const weekData = await Promise.all(weekPromises);
-
-        weeklyGrid.innerHTML = '';
-
-        weekData.forEach(item => {
-            const total = item.tasks.length;
-            const completed = item.tasks.filter(t => t.completed).length;
-            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-
-            const dayEl = document.createElement('div');
-            dayEl.className = `weekly-day ${item.dayStr === selectedDate ? 'active' : ''}`;
-            dayEl.innerHTML = `
-                <div class="weekly-day-name">${item.dayLabel}</div>
-                <div class="weekly-bar-bg"><div class="weekly-bar-fill" style="height: ${percent}%;"></div></div>
-                <div class="weekly-percent">${percent}%</div>
-            `;
-            dayEl.addEventListener('click', () => {
-                selectedDate = item.dayStr;
-                dateInput.value = selectedDate;
-                listenToSelectedDate();
-            });
-            weeklyGrid.appendChild(dayEl);
+        // Firebase 데이터 변경 감지 (페이지 진입 시 최초 1회 자동 실행됨)
+        onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
+            renderPlanner();
         });
-    }
 
-    // 최초 실행
-    listenToSelectedDate();
-</script>
-
-
+    </script>
 </body>
 </html>
