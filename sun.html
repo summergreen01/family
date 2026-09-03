@@ -270,7 +270,7 @@
 async function renderWeeklyChart() {
     const weeklyGrid = document.getElementById('weekly-grid');
 
-    const current = new Date(selectedDate);
+    const current = new Date(selectedDate + 'T00:00:00');
     const dayOfWeek = current.getDay();
     const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
     const monday = new Date(current);
