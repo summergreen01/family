@@ -193,6 +193,7 @@
             progressPercent.innerText = `${percent}% (${completed}/${total})`;
 
             renderWeeklyChart();
+            loadReflection();
         }
 
         async function addTodo() {
@@ -306,7 +307,7 @@
          // Firebase 데이터 변경 감지 (페이지 진입 시 최초 1회 자동 실행됨)
         onValue(ref(db, `tasks/${MEMBER_ID}/${selectedDate}`), () => {
             renderPlanner();
-            loadReflection();
+           
         });
 
      
